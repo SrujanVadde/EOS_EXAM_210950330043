@@ -23,6 +23,7 @@ int main()
              printf("FOUND\n");
          }
       }
+      close(fd1);
     }
     else if(id2==0&&id1>0)
     {
@@ -31,7 +32,7 @@ int main()
          {
              printf("FOUND\n");
          }
-
+      close(fd1);
     }
     else
     {
