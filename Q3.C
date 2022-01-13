@@ -1,43 +1,76 @@
 #include<stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
- #include <sys/stat.h>
- #include <fcntl.h>
- #include<stdlib.h>
- #include<errno.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include<stdlib.h>
+#include<errno.h>
+#include<string.h>
 int main()
 {
-    int fd1;
-    char word[20],buff[20];
-    pid_t id1,id2;
-    printf("Before fork\n");
-    id1=fork();
-    id2=fork();
-    if(id1==0&&id2>0)
-    {
-      while(!(buff==word))
-      {
-         read(fd1,&buff,1);
-         if(buff==word)
-         {
-             printf("FOUND\n");
-         }
-      }
-    }
-    else if(id2==0&&id1>0)
-    {
-         read(fd1,buff,1024);
-        if(buff==word)
-         {
-             printf("FOUND\n");
-         }
+int fd[2],fd1,i=0,r=2;
+char w[100],b[100],w1[100],ch;
+pid_t id;
+pipe(fd);
+id=fork();
 
-    }
-    else
-    {
-        fd1=open("/home/srujan/EOS_EXAM/dictionary.txt",O_RDONLY,S_IRUSR | S_IWUSR);
-        printf("Enter a word to search:");
-        scanf("%s",word);
-    }
-    return 0;
+if(id==0)
+{
+close(fd[1]);
+read(fd[0],&b,10);
+printf("%s\n",b);
+fd1=open("dictionary.txt",O_RDONLY,S_IRUSR | S_IWUSR);
+if(fd1==-1)
+{
+printf("Failed to open file\n");
+exit (EXIT_FAILURE);
 }
+else
+{
+
+while(ch!=EOF&&read(fd1,&ch,1))
+{
+if(ch!='\n')
+{
+w1[i]=ch;
+i++;
+}
+else
+{
+w1[i]='\0';
+r=strcmp(w1,b);
+if(r==0)
+{
+printf("The word is found by process 1\n");
+return 1;
+}
+else
+{
+i=0;
+
+}
+
+}
+
+}
+printf("word not found\n");
+
+
+
+}
+}
+
+else
+{
+close(fd[0]);
+
+printf("Enter a word to search : \n");
+scanf("%s",w);
+write(fd[1],&w,10);
+
+}
+close(fd1);
+return 0;
+}
+
+
