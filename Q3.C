@@ -58,6 +58,7 @@ printf("word not found\n");
 
 
 }
+close(fd1);
 }
 
 else
@@ -69,8 +70,8 @@ scanf("%s",w);
 write(fd[1],&w,10);
 
 }
-close(fd1);
+sleep(1);
+
 return 0;
 }
-
 
